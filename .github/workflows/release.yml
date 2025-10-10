@@ -1,0 +1,171 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build for Intel
+        run: |
+          echo "Building for macOS (Intel)..."
+          GOOS=darwin GOARCH=amd64 go build -o bdterm-amd64
+
+      - name: Build for Apple Silicon
+        run: |
+          echo "Building for macOS (Apple Silicon)..."
+          GOOS=darwin GOARCH=arm64 go build -o bdterm-arm64
+
+      - name: Create universal binary
+        run: |
+          echo "Creating universal binary..."
+          lipo -create -output bdterm bdterm-amd64 bdterm-arm64
+          rm bdterm-amd64 bdterm-arm64
+          echo "Universal binary created: bdterm"
+          file bdterm
+
+      - name: Strip binary
+        run: |
+          strip bdterm
+          echo "Binary stripped"
+
+      - name: Create release directory
+        run: |
+          mkdir -p release
+          mv bdterm release/bdterm
+          echo "Final binary moved to release/bdterm"
+
+      - name: Generate checksum
+        id: checksum
+        run: |
+          cd release
+          CHECKSUM=$(shasum -a 256 bdterm | awk '{print $1}')
+          echo "CHECKSUM=$CHECKSUM" >> $GITHUB_OUTPUT
+          echo "$CHECKSUM  bdterm" > checksums.txt
+          echo "SHA256: $CHECKSUM"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release/bdterm
+            release/checksums.txt
+          generate_release_notes: true
+          body: |
+            ## Installation
+            
+            ```
+            curl -fsSL https://raw.githubusercontent.com/pandeynmn/bdterm/main/install.sh | bash
+            ```
+            
+            ## SHA256 Checksum
+            
+            ```
+            ${{ steps.checksum.outputs.CHECKSUM }}
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update install.sh with new checksum and URL
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          CHECKSUM=${{ steps.checksum.outputs.CHECKSUM }}
+          
+          cat > install.sh << 'EOF'
+          #!/bin/bash
+          
+          # BetterDiscord Terminal Installer
+          # Author: nmn
+          # Website: https://pand.dev
+          # Source: https://github.com/pandeynmn/bdterm
+          # License: Apache-2.0
+          
+          # This script downloads and verifies the bdterm installer binary and runs it.
+          # It is recommended to review the script before executing it.
+          # Usage: curl -fsSL https://raw.githubusercontent.com/pandeynmn/bdterm/main/install.sh | bash
+          #        curl -fsSL https://bd.pand.dev/install.sh | bash
+          
+          set -e
+          
+          # Colors
+          RED='\033[0;31m'
+          YELLOW='\033[0;33m'
+          GREEN='\033[0;32m'
+          NC='\033[0m'
+          
+          # Configuration
+          BINARY_URL="https://github.com/pandeynmn/bdterm/releases/download/VERSION_PLACEHOLDER/bdterm"
+          BINARY_NAME="bdterm"
+          TMP_DIR="/tmp"
+          BINARY_PATH="${TMP_DIR}/${BINARY_NAME}"
+          EXPECTED_SHA256="CHECKSUM_PLACEHOLDER"
+          
+          # Detect architecture
+          ARCH=$(uname -m)
+          if [[ "$ARCH" != "x86_64" && "$ARCH" != "arm64" ]]; then
+              echo -e "${RED}Error: Unsupported architecture: $ARCH${NC}"
+              exit 1
+          fi
+          
+          # Download binary
+          if ! curl -fsSL "${BINARY_URL}" -o "${BINARY_PATH}"; then
+              echo -e "${RED}Error: Failed to download installer${NC}"
+              exit 1
+          fi
+          
+          # Verify SHA-256 checksum
+          ACTUAL_SHA256=$(shasum -a 256 "${BINARY_PATH}" | awk '{print $1}')
+          if [[ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]]; then
+              echo -e "${RED}Error: Checksum verification failed${NC}"
+              echo -e "${RED}  Expected: $EXPECTED_SHA256${NC}"
+              echo -e "${RED}  Got: $ACTUAL_SHA256${NC}"
+              echo -e "${YELLOW}Installer may be corrupted/tampered with or the expected checksum is outdated.${NC}"
+              echo -e "${YELLOW}The program was not run - your system is safe.${NC}"
+              rm -f "${BINARY_PATH}"
+              exit 1
+          fi
+          
+          echo -e "${GREEN}Checksum verification passed${NC}"
+          
+          # Make executable
+          chmod +x "${BINARY_PATH}"
+          
+          # Run the binary
+          "${BINARY_PATH}"
+          
+          # Clean up
+          rm -f "${BINARY_PATH}"
+          EOF
+          
+          # Replace placeholders
+          sed -i '' "s|VERSION_PLACEHOLDER|$VERSION|g" install.sh
+          sed -i '' "s|CHECKSUM_PLACEHOLDER|$CHECKSUM|g" install.sh
+          chmod +x install.sh
+
+      - name: Commit and push install.sh
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add install.sh
+          git diff --staged --quiet || git commit -m "Update install.sh for ${{ steps.get_version.outputs.VERSION }}"
+          git push origin HEAD:main || echo "No changes to push"
