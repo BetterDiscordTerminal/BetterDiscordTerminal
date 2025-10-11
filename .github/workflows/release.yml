@@ -26,28 +26,17 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - name: Build for Intel
-        run: |
-          echo "Building for macOS (Intel)..."
-          GOOS=darwin GOARCH=amd64 go build -o bdterm-amd64
-
       - name: Build for Apple Silicon
         run: |
           echo "Building for macOS (Apple Silicon)..."
-          GOOS=darwin GOARCH=arm64 go build -o bdterm-arm64
-
-      - name: Create universal binary
-        run: |
-          echo "Creating universal binary..."
-          lipo -create -output bdterm bdterm-amd64 bdterm-arm64
-          rm bdterm-amd64 bdterm-arm64
-          echo "Universal binary created: bdterm"
-          file bdterm
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o bdterm
 
       - name: Strip binary
         run: |
           strip bdterm
           echo "Binary stripped"
+          file bdterm
+          ls -lh bdterm
 
       - name: Create release directory
         run: |
@@ -78,6 +67,8 @@ jobs:
             curl -fsSL https://raw.githubusercontent.com/BetterDiscordTerminal/BetterDiscordTerminal/main/install.sh | bash
             ```
             
+            **Note:** ARM64 (Apple Silicon) only. Intel Macs are not supported.
+            
             ## SHA256 Checksum
             
             ```
@@ -103,7 +94,6 @@ jobs:
           # This script downloads and verifies the bdterm installer binary and runs it.
           # It is recommended to review the script before executing it.
           # Usage: curl -fsSL https://raw.githubusercontent.com/BetterDiscordTerminal/BetterDiscordTerminal/main/install.sh | bash
-          #        curl -fsSL https://bd.pand.dev/install.sh | bash
           
           set -e
           
@@ -122,8 +112,10 @@ jobs:
           
           # Detect architecture
           ARCH=$(uname -m)
-          if [[ "$ARCH" != "x86_64" && "$ARCH" != "arm64" ]]; then
+          if [[ "$ARCH" != "arm64" ]]; then
               echo -e "${RED}Error: Unsupported architecture: $ARCH${NC}"
+              echo -e "${YELLOW}BDTerm only supports Apple Silicon (ARM64) Macs.${NC}"
+              echo -e "${YELLOW}Intel Macs are not supported in this version.${NC}"
               exit 1
           fi
           
