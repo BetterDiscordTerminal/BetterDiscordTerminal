@@ -34,6 +34,8 @@ if [[ "$ARCH" != "arm64" ]]; then
     exit 1
 fi
 
+echo -e "${GREEN}Downloading...${NC}"
+
 # Download binary
 if ! curl -fsSL "${BINARY_URL}" -o "${BINARY_PATH}"; then
     echo -e "${RED}Error: Failed to download installer${NC}"
