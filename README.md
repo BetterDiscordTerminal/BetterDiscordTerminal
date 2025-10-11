@@ -163,4 +163,9 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 This tool is not affiliated with Discord Inc. or BetterDiscord. Use at your own risk. Modifying Discord may violate their Terms of Service.
 
+## Why this project was created
+
+I wanted to make a TUI application using go and I wanted an installer that wasn't resource intensive.
+
+
 Made with ❤️ by [nmn](https://pand.dev)
