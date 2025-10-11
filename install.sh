@@ -20,7 +20,7 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Configuration
-BINARY_URL="https://github.com/pandeynmn/bdterm/releases/download/v1.0.1/bdterm"
+BINARY_URL="https://github.com/BetterDiscordTerminal/BetterDiscordTerminal/releases/download/v1.0.2/bdterm"
 BINARY_NAME="bdterm"
 TMP_DIR="/tmp"
 BINARY_PATH="${TMP_DIR}/${BINARY_NAME}"
