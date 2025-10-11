@@ -24,7 +24,7 @@ BINARY_URL="https://github.com/BetterDiscordTerminal/BetterDiscordTerminal/relea
 BINARY_NAME="bdterm"
 TMP_DIR="/tmp"
 BINARY_PATH="${TMP_DIR}/${BINARY_NAME}"
-EXPECTED_SHA256="5bd5e948d75a7eeffba10f0f38c787e5291adcf2bc02f7e4af1874a5a0064e66"
+EXPECTED_SHA256="2ac4eb8802b50f8e3e7610ec09d4836af46becceca63de24eef3dda7d5113dac"
 
 # Detect architecture
 ARCH=$(uname -m)
