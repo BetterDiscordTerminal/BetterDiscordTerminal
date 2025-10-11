@@ -131,6 +131,7 @@ func DownloadASAR(asarPath string) error {
 
 	return nil
 }
+
 // Move BetterDiscord.asar from /tmp to the BetterDiscord data directory.
 func MoveBetterDiscordAsar() (string, error) {
 	home, err := os.UserHomeDir()

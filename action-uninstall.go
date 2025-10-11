@@ -50,9 +50,9 @@ func initUninstallModel() uninstallModel {
 				return common.FontColor(fmt.Sprintf(" %d. %s (%s)", gdIndex+1, v.Name, v.Description), selector.ColorUnSelected)
 			},
 			FooterFunc: func(m selector.Model, obj interface{}, gdIndex int) string {
-			return common.FontColor("\nUse ↑/↓ to navigate, enter to select, ESC to return to menu, q/ctrl-c to quit.", selector.ColorFooter) + "\n" +
-			common.FontColor("BetterDiscord Terminal by nmn (https://github.com/pandeynmn/bdterm)", "8")
-		},
+				return common.FontColor("\nUse ↑/↓ to navigate, enter to select, ESC to return to menu, q/ctrl-c to quit.", selector.ColorFooter) + "\n" +
+					common.FontColor("BetterDiscord Terminal by nmn (https://github.com/pandeynmn/bdterm)", "8")
+			},
 
 			FinishedFunc: func(s interface{}) string {
 				return ""
@@ -114,25 +114,25 @@ func (m uninstallModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m uninstallModel) View() string {
-    // When uninstalling, DON'T show the selector at all
-    if m.uninstalling && m.result.version.Name == "" {
-        content := fmt.Sprintf("%s  Uninstalling BetterDiscord...", m.spinner.View())
-        return "\n" + installingBox.Render(content) + "\n\n"
-    }
+	// When uninstalling, DON'T show the selector at all
+	if m.uninstalling && m.result.version.Name == "" {
+		content := fmt.Sprintf("%s  Uninstalling BetterDiscord...", m.spinner.View())
+		return "\n" + installingBox.Render(content) + "\n\n"
+	}
 
-    // Show result
-    if m.result.version.Name != "" {
-        if m.result.err != nil {
-            title := errorText.Render("✗ Uninstallation Failed")
-            errorMsg := subtleText.Render("\n\n" + m.result.err.Error())
-            return "\n" + errorBox.Render(title+errorMsg) + "\n\n"
-        }
+	// Show result
+	if m.result.version.Name != "" {
+		if m.result.err != nil {
+			title := errorText.Render("✗ Uninstallation Failed")
+			errorMsg := subtleText.Render("\n\n" + m.result.err.Error())
+			return "\n" + errorBox.Render(title+errorMsg) + "\n\n"
+		}
 
-        title := successText.Render("✓ Uninstallation Complete!")
-        details := fmt.Sprintf("\n\nBetterDiscord removed from %s", m.result.version.Name)
-        return "\n" + successBox.Render(title+details) + "\n\n"
-    }
+		title := successText.Render("✓ Uninstallation Complete!")
+		details := fmt.Sprintf("\n\nBetterDiscord removed from %s", m.result.version.Name)
+		return "\n" + successBox.Render(title+details) + "\n\n"
+	}
 
-    // Only show selector when NOT uninstalling
-    return m.sl.View()
+	// Only show selector when NOT uninstalling
+	return m.sl.View()
 }

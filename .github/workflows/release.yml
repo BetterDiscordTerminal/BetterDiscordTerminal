@@ -31,13 +31,6 @@ jobs:
           echo "Building for macOS (Apple Silicon)..."
           GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o bdterm
 
-      - name: Strip binary
-        run: |
-          strip bdterm
-          echo "Binary stripped"
-          file bdterm
-          ls -lh bdterm
-
       - name: Create release directory
         run: |
           mkdir -p release

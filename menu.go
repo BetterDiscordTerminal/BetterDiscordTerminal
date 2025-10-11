@@ -58,7 +58,7 @@ https://www.apache.org/licenses/LICENSE-2.0.txt
 }
 
 func (m menuModel) Init() tea.Cmd {
-    return tea.ClearScreen
+	return tea.ClearScreen
 }
 
 func (m menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

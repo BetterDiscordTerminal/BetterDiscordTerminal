@@ -28,35 +28,34 @@ func (m mainModel) Init() tea.Cmd {
 }
 
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    switch msg := msg.(type) {
-    case tea.KeyMsg:
-        switch msg.String() {
-        case "ctrl+c", "q":
-            return m, tea.Quit
-        }
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+		}
 
-    case switchToInstallModel:
-        m.activeModel = initInstallModel()
-        return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
-        
-    case switchToUninstallModel:
-        m.activeModel = initUninstallModel()
-        return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
-        
-    case switchToRepairModel:
-        m.activeModel = initRepairModel()
-        return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
-        
-    case switchToMainMenu:
-        m.activeModel = initMenuModel()
-        return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
-    }
+	case switchToInstallModel:
+		m.activeModel = initInstallModel()
+		return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
 
-    var cmd tea.Cmd
-    m.activeModel, cmd = m.activeModel.Update(msg)
-    return m, cmd
+	case switchToUninstallModel:
+		m.activeModel = initUninstallModel()
+		return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
+
+	case switchToRepairModel:
+		m.activeModel = initRepairModel()
+		return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
+
+	case switchToMainMenu:
+		m.activeModel = initMenuModel()
+		return m, tea.Batch(tea.ClearScreen, m.activeModel.Init())
+	}
+
+	var cmd tea.Cmd
+	m.activeModel, cmd = m.activeModel.Update(msg)
+	return m, cmd
 }
-
 
 func (m mainModel) View() string {
 	return m.activeModel.View()
