@@ -151,7 +151,7 @@ BDTerm verifies all downloaded files using SHA256 checksums to ensure authentici
 ### Source Code
 
 All source code is open and available for inspection. The installer:
-- Only modifies Discord's app.asar shim
+- Only modifies Discord's index.js to add BetterDiscord.asar module.
 - Does not collect any data
 - Does not make external network requests except to download BetterDiscord
 
