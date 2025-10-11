@@ -75,7 +75,7 @@ jobs:
             ## Installation
             
             ```
-            curl -fsSL https://raw.githubusercontent.com/pandeynmn/bdterm/main/install.sh | bash
+            curl -fsSL https://raw.githubusercontent.com/BetterDiscordTerminal/BetterDiscordTerminal/main/install.sh | bash
             ```
             
             ## SHA256 Checksum
@@ -97,12 +97,12 @@ jobs:
           # BetterDiscord Terminal Installer
           # Author: nmn
           # Website: https://pand.dev
-          # Source: https://github.com/pandeynmn/bdterm
+          # Source: https://github.com/BetterDiscordTerminal/BetterDiscordTerminal
           # License: Apache-2.0
           
           # This script downloads and verifies the bdterm installer binary and runs it.
           # It is recommended to review the script before executing it.
-          # Usage: curl -fsSL https://raw.githubusercontent.com/pandeynmn/bdterm/main/install.sh | bash
+          # Usage: curl -fsSL https://raw.githubusercontent.com/BetterDiscordTerminal/BetterDiscordTerminal/main/install.sh | bash
           #        curl -fsSL https://bd.pand.dev/install.sh | bash
           
           set -e
@@ -114,7 +114,7 @@ jobs:
           NC='\033[0m'
           
           # Configuration
-          BINARY_URL="https://github.com/pandeynmn/bdterm/releases/download/VERSION_PLACEHOLDER/bdterm"
+          BINARY_URL="https://github.com/BetterDiscordTerminal/BetterDiscordTerminal/releases/download/VERSION_PLACEHOLDER/bdterm"
           BINARY_NAME="bdterm"
           TMP_DIR="/tmp"
           BINARY_PATH="${TMP_DIR}/${BINARY_NAME}"
