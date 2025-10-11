@@ -1,15 +1,15 @@
 #!/bin/bash
-#
+
 # BetterDiscord Terminal Installer
 # Author: nmn
 # Website: https://pand.dev
 # Source: https://github.com/pandeynmn/bdterm
 # License: Apache-2.0
-#
+
 # This script downloads and verifies the bdterm installer binary and runs it.
 # It is recommended to review the script before executing it.
-# Usage: curl -s http://localhost:8000/install.sh | bash
-#
+# Usage: curl -fsSL https://raw.githubusercontent.com/pandeynmn/bdterm/main/install.sh | bash
+#        curl -fsSL https://bd.pand.dev/install.sh | bash
 
 set -e
 
@@ -20,11 +20,11 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Configuration
-BINARY_URL="http://localhost:8000/release/bdterm"
+BINARY_URL="https://github.com/pandeynmn/bdterm/releases/download/v1.0.1/bdterm"
 BINARY_NAME="bdterm"
 TMP_DIR="/tmp"
 BINARY_PATH="${TMP_DIR}/${BINARY_NAME}"
-EXPECTED_SHA256="3d7c1e081a61f049b68243bc37a077f869d8486605d6a87ca431cab44bb7b93e"
+EXPECTED_SHA256="5bd5e948d75a7eeffba10f0f38c787e5291adcf2bc02f7e4af1874a5a0064e66"
 
 # Detect architecture
 ARCH=$(uname -m)
@@ -41,17 +41,17 @@ fi
 
 # Verify SHA-256 checksum
 ACTUAL_SHA256=$(shasum -a 256 "${BINARY_PATH}" | awk '{print $1}')
-
 if [[ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]]; then
     echo -e "${RED}Error: Checksum verification failed${NC}"
-    echo -e "${RED}   Expected: $EXPECTED_SHA256${NC}"
-    echo -e "${RED}   Got:      $ACTUAL_SHA256${NC}"
+    echo -e "${RED}  Expected: $EXPECTED_SHA256${NC}"
+    echo -e "${RED}  Got: $ACTUAL_SHA256${NC}"
     echo -e "${YELLOW}Installer may be corrupted/tampered with or the expected checksum is outdated.${NC}"
     echo -e "${YELLOW}The program was not run - your system is safe.${NC}"
     rm -f "${BINARY_PATH}"
     exit 1
 fi
-echo -e "${GREEN}CheckSum Verification passed${NC}"
+
+echo -e "${GREEN}Checksum verification passed${NC}"
 
 # Make executable
 chmod +x "${BINARY_PATH}"
